@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Registration Form</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f3;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    :root {
+      --accent: #1D9E75;
+      --accent-light: #E1F5EE;
+      --accent-dark: #0F6E56;
+      --border: rgba(0,0,0,0.12);
+      --border-hover: rgba(0,0,0,0.25);
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f3;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6b6b6b;
+      --text-tertiary: #9b9b9b;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    .form-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .form-header {
+      margin-bottom: 2rem;
+    }
+
+    .form-header h1 {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .form-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      background: var(--bg-primary);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-dark);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title i { font-size: 15px; }
+
+    .row {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .row:last-child { margin-bottom: 0; }
+
+    .row.cols-2 { grid-template-columns: 1fr 1fr; }
+    .row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .required { color: #D85A30; }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      height: 36px;
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+    }
+
+    .field textarea {
+      height: auto;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .field input:hover,
+    .field select:hover,
+    .field textarea:hover {
+      border-color: var(--border-hover);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.12);
+    }
+
+    .field .hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 4px;
+    }
+
+    /* Course cards */
+    .course-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .course-card {
+      border: 0.5px solid var(--border-hover);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: block;
+    }
+
+    .course-card:hover { background: var(--bg-secondary); }
+
+    .course-card.selected {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .course-card input[type="checkbox"] { display: none; }
+
+    .course-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .course-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .course-card.selected .course-name { color: var(--accent-dark); }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    .badge.open { background: var(--accent-light); color: var(--accent-dark); }
+    .badge.full { background: #FCEBEB; color: #A32D2D; }
+
+    /* Day chips */
+    .day-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .day-chip {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      border: 0.5px solid var(--border-hover);
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-secondary);
+      background: var(--bg-primary);
+      user-select: none;
+    }
+
+    .day-chip:hover { background: var(--bg-secondary); }
+
+    .day-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    /* Submit row */
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .summary {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .summary strong { color: var(--text-primary); }
+
+    .btn-submit {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 10px 28px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .btn-submit:hover { background: var(--accent-dark); }
+    .btn-submit:active { transform: scale(0.98); }
+
+    /* Agreement */
+    .agree-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .agree-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      accent-color: var(--accent);
+      margin-top: 2px;
+    }
+
+    /* Success banner */
+    .success-banner {
+      background: var(--accent-light);
+      border: 0.5px solid #5DCAA5;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-top: 1rem;
+      font-size: 14px;
+      color: var(--accent-dark);
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .success-banner i { font-size: 20px; }
+
+    /* Responsive */
+    @media (max-width: 540px) {
+      .row.cols-2,
+      .row.cols-3,
+      .course-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .submit-row { flex-direction: column; align-items: stretch; }
+      .btn-submit { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-wrap">
+  <div class="form-header">
+    <h1>Course Registration</h1>
+    <p>Complete all required fields to register for your courses this semester.</p>
+  </div>
+
+  <!-- Personal Information -->
+  <div class="section">
+    <div class="section-title">
+      <i class="ti ti-user"></i> Personal information
+    </div>
+    <div class="row cols-2">
+      <div class="field">
+        <label>First name <span class="required">*</span></label>
+        <input type="text" id="fname" placeholder="e.g. Jane" />
+      </div>
+      <div class="field">
+        <label>Last name <span class="required">*</span></label>
+        <input type="text" id="lname" placeholder="e.g. Doe" />
+      </div>
+    </div>
+    <div class="row cols-2">
+      <div class="field">
+        <label>Student ID <span class="required">*</span></label>
+        <input type="text" id="sid" placeholder="e.g. STU-2024-001" />
+      </div>
+      <div class="field">
+        <label>Date of birth</label>
+        <input type="date" id="dob" />
+      </div>
+    </div>
+    <div class="row cols-2">
+      <div class="field">
+        <label>Email address <span class="required">*</span></label>
+        <input type="email" id="email" placeholder="student@university.edu" />
+      </div>
+      <div class="field">
+        <label>Phone number</label>
+        <input type="tel" id="phone" placeholder="+250 7XX XXX XXX" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Details -->
+  <div class="section">
+    <div class="section-title">
+      <i class="ti ti-school"></i> Academic details
+    </div>
+    <div class="row cols-3">
+      <div class="field">
+        <label>Faculty <span class="required">*</span></label>
+        <select id="faculty">
+          <option value="">Select faculty</option>
+          <option>Science & Technology</option>
+          <option>Business & Economics</option>
+          <option>Arts & Humanities</option>
+          <option>Law</option>
+          <option>Medicine & Health</option>
+          <option>Education</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Year of study <span class="required">*</span></label>
+        <select id="year">
+          <option value="">Select year</option>
+          <option>Year 1</option>
+          <option>Year 2</option>
+          <option>Year 3</option>
+          <option>Year 4</option>
+          <option>Postgraduate</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Semester <span class="required">*</span></label>
+        <select id="semester">
+          <option value="">Select</option>
+          <option>Semester 1 – 2025/26</option>
+          <option>Semester 2 – 2025/26</option>
+          <option>Full year – 2025/26</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Selection -->
+  <div class="section">
+    <div class="section-title">
+      <i class="ti ti-books"></i> Course selection
+    </div>
+    <p style="font-size:13px; color:#6b6b6b; margin-bottom:12px;">
+      Select the courses you wish to enroll in this semester. Maximum 5 courses.
+    </p>
+    <div class="course-grid" id="courseGrid">
+      <label class="course-card" onclick="toggleCourse(this)">
+        <input type="checkbox" value="CS101" />
+        <div class="course-name">Introduction to Computer Science <span class="badge open">Open</span></div>
+        <div class="course-meta">CS101 · 3 credits · Mon / Wed 08:00–09:30</div>
+      </label>
+      <label class="course-card" onclick="toggleCourse(this)">
+        <input type="checkbox" value="MTH201" />
+        <div class="course-name">Calculus II <span class="badge open">Open</span></div>
+        <div class="course-meta">MTH201 · 4 credits · Tue / Thu 10:00–11:30</div>
+      </label>
+      <label class="course-card" onclick="toggleCourse(this)">
+        <input type="checkbox" value="BUS110" />
+        <div class="course-name">Principles of Management <span class="badge open">Open</span></div>
+        <div class="course-meta">BUS110 · 3 credits · Mon / Fri 13:00–14:30</div>
+      </label>
+      <label class="course-card" onclick="toggleCourse(this)">
+        <input type="checkbox" value="ENG102" />
+        <div class="course-name">Academic Writing <span class="badge full">Full</span></div>
+        <div class="course-meta">ENG102 · 2 credits · Wed 14:00–16:00</div>
+      </label>
+      <label class="course-card" onclick="toggleCourse(this)">
+        <input type="checkbox" value="PHY201" />
+        <div class="course-name">Physics: Mechanics <span class="badge open">Open</span></div>
+        <div class="course-meta">PHY201 · 3 credits · Tue / Thu 08:00–09:30</div>
+      </label>
+      <label class="course-card" onclick="toggleCourse(this)">
+        <input type="checkbox" value="SOC100" />
+        <div class="course-name">Introduction to Sociology <span class="badge open">Open</span></div>
+        <div class="course-meta">SOC100 · 3 credits · Fri 09:00–12:00</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Scheduling Preferences -->
+  <div class="section">
+    <div class="section-title">
+      <i class="ti ti-calendar"></i> Preferred class days
+    </div>
+    <div class="day-chips" id="dayChips">
+      <div class="day-chip" onclick="toggleDay(this)">Monday</div>
+      <div class="day-chip" onclick="toggleDay(this)">Tuesday</div>
+      <div class="day-chip" onclick="toggleDay(this)">Wednesday</div>
+      <div class="day-chip" onclick="toggleDay(this)">Thursday</div>
+      <div class="day-chip" onclick="toggleDay(this)">Friday</div>
+      <div class="day-chip" onclick="toggleDay(this)">Saturday</div>
+    </div>
+    <div class="field" style="margin-top: 12px;">
+      <label>Preferred time slot</label>
+      <select id="timeslot">
+        <option value="">No preference</option>
+        <option>Morning (07:00–12:00)</option>
+        <option>Afternoon (12:00–17:00)</option>
+        <option>Evening (17:00–20:00)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Additional Information -->
+  <div class="section">
+    <div class="section-title">
+      <i class="ti ti-notes"></i> Additional information
+    </div>
+    <div class="field">
+      <label>Special requirements or accommodations</label>
+      <textarea id="notes" placeholder="E.g. disability support, language preferences, scheduling constraints…"></textarea>
+    </div>
+    <div class="field" style="margin-top: 14px;">
+      <label class="agree-label">
+        <input type="checkbox" id="agree" />
+        I confirm that the information provided is accurate and I agree to the university's course registration policy.
+      </label>
+    </div>
+  </div>
+
+  <div class="success-banner" id="successBanner">
+    <i class="ti ti-circle-check"></i>
+    Registration submitted successfully! You will receive a confirmation email shortly.
+  </div>
+
+  <div class="submit-row">
+    <div class="summary" id="summary"><strong>0</strong> courses selected</div>
+    <button class="btn-submit" onclick="submitForm()">Submit registration</button>
+  </div>
+</div>
+
+<script>
+  let selectedCourses = 0;
+
+  function toggleCourse(card) {
+    const isFull = card.querySelector('.badge.full');
+    if (isFull && !card.classList.contains('selected')) {
+      card.style.outline = '2px solid #E24B4A';
+      setTimeout(() => card.style.outline = '', 700);
+      return;
+    }
+    if (!card.classList.contains('selected') && selectedCourses >= 5) {
+      card.style.outline = '2px solid #E24B4A';
+      setTimeout(() => card.style.outline = '', 700);
+      return;
+    }
+    card.classList.toggle('selected');
+    const cb = card.querySelector('input[type="checkbox"]');
+    cb.checked = card.classList.contains('selected');
+    selectedCourses = document.querySelectorAll('.course-card.selected').length;
+    document.getElementById('summary').innerHTML =
+      `<strong>${selectedCourses}</strong> course${selectedCourses !== 1 ? 's' : ''} selected`;
+  }
+
+  function toggleDay(chip) {
+    chip.classList.toggle('active');
+  }
+
+  function submitForm() {
+    const fname    = document.getElementById('fname').value.trim();
+    const lname    = document.getElementById('lname').value.trim();
+    const sid      = document.getElementById('sid').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const faculty  = document.getElementById('faculty').value;
+    const year     = document.getElementById('year').value;
+    const semester = document.getElementById('semester').value;
+    const agree    = document.getElementById('agree').checked;
+
+    if (!fname || !lname || !sid || !email || !faculty || !year || !semester) {
+      alert('Please fill in all required fields marked with *');
+      return;
+    }
+    if (!agree) {
+      alert('Please agree to the registration policy to continue.');
+      return;
+    }
+    if (selectedCourses === 0) {
+      alert('Please select at least one course.');
+      return;
+    }
+
+    const banner = document.getElementById('successBanner');
+    banner.style.display = 'flex';
+    banner.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
